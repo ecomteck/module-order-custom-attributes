@@ -31,7 +31,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Registry;
 use Magento\Store\Model\WebsiteFactory;
-use Magento\Framework\Serialize\Serializer\FormData;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\LayoutFactory;
 
@@ -54,10 +53,7 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
      * @var FilterManager
      */
     protected $filterManager;
-    /**
-     * @var FormData
-     */
-    private $formDataSerializer;
+
     /**
      * @var LayoutFactory
      */
@@ -74,7 +70,6 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
      * @param HelperOrder $helperOrder
      * @param FilterManager $filterManager
      * @param LayoutFactory $layoutFactory
-     * @param FormData|null $formDataSerializer
      */
     public function __construct(
         Context $context,
@@ -86,8 +81,7 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
         HelperData $helperData,
         HelperOrder $helperOrder,
         FilterManager $filterManager,
-        LayoutFactory $layoutFactory,
-        FormData $formDataSerializer = null
+        LayoutFactory $layoutFactory
     ) {
         $this->helperData = $helperData;
         $this->helperOrder = $helperOrder;
@@ -101,7 +95,6 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
             $websiteFactory
         );
         $this->layoutFactory = $layoutFactory;
-        $this->formDataSerializer = $formDataSerializer ?? ObjectManager::getInstance()->get(FormData::class);
     }
 
     /**
@@ -114,26 +107,12 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
      */
     public function execute()
     {
-        try {
-            $optionData = $this->formDataSerializer->unserialize(
-                $this->getRequest()->getParam('serialized_options', '[]')
-            );
-        } catch (\InvalidArgumentException $e) {
-            $message = __("The attribute couldn't be saved due to an error. Verify your information and try again. "
-                . "If the error persists, please try again later.");
-            $this->messageManager->addErrorMessage($message);
-
-            return $this->returnResult('adminhtml/*/edit', ['_current' => true], ['error' => true]);
-        }
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         $data = $this->getRequest()->getPostValue();
-        $data = array_replace_recursive(
-            $data,
-            $optionData
-        );
         if ($this->getRequest()->isPost() && $data) {
+            $this->preprocessOptionsData($data);
             /* @var $attributeObject \Ecomteck\OrderCustomAttributes\Model\Sales\Order\Attribute */
             $attributeObject = $this->_initAttribute();
 
@@ -269,6 +248,27 @@ class Save extends \Ecomteck\OrderCustomAttributes\Controller\Adminhtml\Order\At
         }
         $resultRedirect->setPath('adminhtml/*/');
         return $resultRedirect;
+    }
+    /**
+     * Extract options data from serialized options field and append to data array.
+     *
+     * This logic is required to overcome max_input_vars php limit
+     * that may vary and/or be inaccessible to change on different instances.
+     *
+     * @param array $data
+     * @return void
+     */
+    private function preprocessOptionsData(&$data)
+    {
+        if (isset($data['serialized_options'])) {
+            $serializedOptions = json_decode($data['serialized_options'], JSON_OBJECT_AS_ARRAY);
+            foreach ($serializedOptions as $serializedOption) {
+                $option = [];
+                parse_str($serializedOption, $option);
+                $data = array_replace_recursive($data, $option);
+            }
+        }
+        unset($data['serialized_options']);
     }
     /**
      * Provides an initialized Result object.
