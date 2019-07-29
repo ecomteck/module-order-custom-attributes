@@ -1,0 +1,49 @@
+/**
+* Copyright © 2017 Ecomteck. All rights reserved.
+* See LICENSE.txt for license details.
+*/
+li.step:first-child .back {
+    display: none;
+}
+li.step .back {
+    float:left;
+}
+li.step .continute {
+    float:right;
+}
+select[multiple]{
+    height:auto
+}
+.payment-option-title .action-toggle:before{
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    line-height: 16px;
+    content: '\f077';
+    color: #333333;
+    font-family: "Font Awesome\ 5 Free";
+    margin-right: 5px;
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: 900;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+  }
+  .payment-option._active .payment-option-title .action-toggle:before{
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    line-height: 16px;
+    content: '\f078';
+    color: #333333;
+    font-family: "Font Awesome\ 5 Free";
+    margin-right: 5px;
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: 900;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+  }
+.payment-option._collapsible .payment-option-title {
+    cursor: pointer;
+  }

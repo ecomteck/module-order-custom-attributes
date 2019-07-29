@@ -1,0 +1,321 @@
+<?php
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+
+// @codingStandardsIgnoreFile
+
+/* @var $block \Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Formtype\Edit\Tab\Tree */
+?>
+<table width="100%">
+    <tr>
+        <td width="50%" style="border-right:1px solid #ddd; padding:0 23px 23px 0;">
+            <div id="tree-container" style="width:100%;height:400px;overflow:auto"></div>
+        </td>
+        <td style="padding:0 0 23px 23px;">
+            <div style="padding-bottom: 5px;">
+                <?php echo $block->getTreeButtonsHtml();?>
+            </div>
+            <div id="fieldset_prop_container">
+                <div class="entry-edit-head">
+                    <h4 class="icon-head head-edit-form fieldset-legend"><?php /* @escapeNotVerified */ echo __('Fieldset Properties')?></h4>
+                </div>
+                <div id="fieldset_properties_fieldset" class="fieldset">
+                    <div class="hor-scroll">
+                        <input type="hidden" id="node_id" value="">
+                        <table class="form-list">
+                            <tbody><tr>
+                                <td>&nbsp;</td>
+                                <td><?php echo $block->getFieldsetButtonsHtml();?></td>
+                            </tr>
+                            <tr>
+                                <td class="label"><label for="fieldset_label"><?php /* @escapeNotVerified */ echo __('Fieldset Title')?> <span class="required">*</span></label></td>
+                                <td class="value"><input id="fieldset_label" value="" class="input-text" type="text"/></td>
+                            </tr>
+                            <tr>
+                                <td class="label"><label for="fieldset_code"><?php /* @escapeNotVerified */ echo __('Fieldset Code')?> <span class="required">*</span></label></td>
+                                <td class="value"><input id="fieldset_code" value="" class="input-text validate-code" type="text"/></td>
+                            </tr>
+                            <?php foreach ($block->getStores() as $store):?>
+                            <tr>
+                                <td class="label"><label for="fieldset_label_<?php /* @escapeNotVerified */ echo $store->getId();?>"><?php /* @escapeNotVerified */ echo __('Fieldset Title')?> (<?php echo $block->escapeHtml($store->getName());?>)</label></td>
+                                <td class="value"><input id="fieldset_label_<?php /* @escapeNotVerified */ echo $store->getId();?>" value="" class="input-text" type="text"/></td>
+                            </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<!--[if IE]>
+<script id="ie-deferred-loader" defer="defer" src="//:"></script>
+<![endif]-->
+<script>
+require([
+    "jquery",
+    "Magento_Ui/js/modal/alert",
+    "mage/backend/validation",
+    "prototype",
+    "extjs/ext-tree-checkbox"
+], function(jQuery, alert){
+/**
+ * Fix ext compatibility with prototype 1.6
+ */
+Ext.lib.Event.getTarget = function(e) {
+    var ee = e.browserEvent || e;
+    return ee.target ? Event.element(ee) : null;
+};
+var formType = {
+    nodes: <?php /* @escapeNotVerified */ echo $block->getAttributesJson()?>,
+    stores: <?php /* @escapeNotVerified */ echo $block->getStoresJson()?>,
+    initialize: function(){
+        this.increment = 0;
+        this.tree = new Ext.tree.TreePanel('tree-container', {
+            animate: false,
+            loader: false,
+            containerScroll: true,
+            rootVisible: false,
+            lines: true,
+            enableDD: true
+        });
+
+        this.treeRoot = new Ext.tree.TreeNode({
+            text: 'Form',
+            id: '_root',
+            type: 'root',
+            allowDrop: true,
+            allowDrag: false,
+            expanded: true,
+            cls: 'folder'
+        });
+        this.tree.setRootNode(this.treeRoot);
+
+        for (var i = 0, l = this.nodes.length; i < l; i++) {
+            var node = new Ext.tree.TreeNode({
+                id:         this.nodes[i].node_id,
+                text:       this.nodes[i].label,
+                code:       this.nodes[i].code,
+                type:       this.nodes[i].type,
+                cls:        this.nodes[i].type == 'element' ? 'leaf' : 'folder',
+                expanded:   true,
+                leaf:       this.nodes[i].type == 'element' ? true : false,
+                allowDrop:  this.nodes[i].type == 'element' ? false : true,
+                allowDrag:  true
+            });
+
+            if (this.nodes[i].type == 'fieldset') {
+                for (storeId in this.stores) {
+                    if (typeof this.nodes[i]['label_'+storeId] == 'undefined') {
+                        var label = null;
+                    } else {
+                        var label = this.nodes[i]['label_'+storeId];
+                    }
+                    node.attributes['label_'+storeId] = label;
+                }
+            }
+
+            if (parentNode = this.tree.getNodeById(this.nodes[i].parent)) {
+                parentNode.appendChild(node);
+            } else {
+                this.treeRoot.appendChild(node);
+            }
+        }
+
+        this.tree.getSelectionModel().addListener('selectionchange', this.onNodeSelect.bind(this));
+        this.tree.addListener('beforeappend', this.onNodeAppend.bind(this));
+        this.tree.render();
+        this.treeRoot.select();
+    },
+    onNodeSelect: function(model, node)
+    {
+        if (!node || node.id == '_root') {
+            $('fieldset_prop_container').hide();
+            return;
+        }
+        if (node.attributes.type != 'fieldset') {
+            $('fieldset_prop_container').hide();
+            return;
+        }
+        $('fieldset_prop_container').show();
+        $('node_id').value = node.id;
+        $('fieldset_code').value = node.attributes.code;
+        $('fieldset_label').value = node.text;
+
+        for (storeId in this.stores) {
+            $('fieldset_label_'+storeId).value = node.attributes['label_'+storeId];
+        }
+
+        $('delete_node_button').show();
+    },
+    onNodeAppend: function(tree,parent,node){
+        if (node.attributes.type == 'fieldset' && parent.attributes.type == 'fieldset') {
+            return false;
+        }
+        if (node.attributes.type == 'fieldset') {
+            var code = node.attributes.code;
+            for(var i=0, l = parent.childNodes.length; i < l; i++) {
+                if (parent.childNodes[i].attributes.type == 'fieldset' && code == parent.childNodes[i].attributes.code) {
+                    alert({
+                        content: '<?php /* @escapeNotVerified */ echo $block->escapeJsQuote(__("A fieldset with the same code alredy exists."))?>'
+                    });
+
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+    fieldsetValidate: function(){
+        $('fieldset_label').addClassName('required-entry');
+        $('fieldset_code').addClassName('required-entry');
+
+        var isValid = true;
+        if(jQuery.validator) {
+            $('fieldset_properties_fieldset').select('input').each(function(el){
+                isValid = jQuery.validator.validateElement(el) && isValid;
+            });
+        }
+
+        $('fieldset_label').removeClassName('required-entry');
+        $('fieldset_code').removeClassName('required-entry');
+
+        return isValid;
+    },
+    fieldsetReset: function(){
+        var inputs = jQuery('#fieldset_properties_fieldset').find('input'),
+            form = inputs.length ? jQuery(inputs[0].form) : null;
+
+        if(form.length && form.data('validation')) {
+            $('fieldset_properties_fieldset').select('input').each(function(el){
+                form.validation('clearError', el);
+            });
+        }
+    },
+    newFieldset: function(){
+        $('fieldset_prop_container').show();
+        $('node_id').value = '';
+        $('fieldset_code').value = '';
+        $('fieldset_label').value = '';
+
+        for (storeId in this.stores) {
+            $('fieldset_label_'+storeId).value = '';
+        }
+
+        this.fieldsetReset();
+
+        $('delete_node_button').hide();
+    },
+    saveFieldset: function(){
+        var hasNodeId = $('node_id').value != '';
+        var isValid = this.fieldsetValidate();
+        if (!isValid) {
+            return;
+        }
+
+        if (hasNodeId) {
+            var node_id = $('node_id').value;
+            var node = this.tree.getNodeById(node_id);
+
+            node.setText($('fieldset_label').value);
+            node.attributes.code = $('fieldset_code').value;
+        } else {
+            var node = new Ext.tree.TreeNode({
+                id: 'f_' + this.increment,
+                text: $('fieldset_label').value,
+                code: $('fieldset_code').value,
+                cls: 'folder',
+                type: 'fieldset',
+                expanded: true,
+                allowDrop: true,
+                allowDrag: true,
+                leaf: false
+            });
+
+            this.increment ++;
+            this.treeRoot.appendChild(node);
+        }
+        for (storeId in this.stores) {
+            node.attributes['label_'+storeId] = $('fieldset_label_'+storeId).value;
+        }
+
+        node.select();
+    },
+    deleteFieldset: function(){
+        var node = this.tree.getNodeById($('node_id').value);
+        if (node) {
+            if (node.childNodes.length) {
+                alert({
+                    content: '<?php /* @escapeNotVerified */ echo $block->escapeJsQuote(__('This fieldset is not empty!'))?>'
+                });
+            } else {
+                node.parentNode.select();
+                node.parentNode.removeChild(node);
+            }
+        }
+    },
+    cancelFieldset: function(){
+        $('fieldset_prop_container').hide();
+        this.treeRoot.select();
+    },
+    collectChilds: function(node) {
+        if (node.id == '_root') {
+            this.treeData = new Hash();
+        } else {
+            var nodeData = {
+                node_id: node.id,
+                parent: node.parentNode.id == '_root' ? null : node.parentNode.id,
+                label: node.attributes.text,
+                code: node.attributes.code,
+                type: node.attributes.type,
+                sort_order: node.parentNode.indexOf(node)
+            };
+            if (node.attributes.type == 'fieldset') {
+                var labels = $H();
+                labels.set('0', node.attributes.text);
+                for (storeId in this.stores) {
+                    var label = node.attributes['label_' + storeId];
+                    if (label != '') {
+                        labels.set(storeId, label);
+                    }
+                }
+                nodeData['labels'] = labels;
+            }
+            this.treeData.set(node.id, nodeData);
+        }
+        if (node.hasChildNodes()) {
+            node.eachChild(this.collectChilds.bind(this));
+        }
+    },
+    save: function(continueEdit) {
+        this.collectChilds(this.treeRoot);
+        $('form_type_data').value = Object.toJSON(this.treeData);
+        $('continue_edit').value = continueEdit ? 1 : 0;
+        jQuery('#edit_form').triggerHandler(continueEdit ? 'saveAndContinueEdit' : 'save');
+    }
+};
+
+window.formType = formType;
+
+Ext.onReady(formType.initialize.bind(formType));
+
+});
+</script>

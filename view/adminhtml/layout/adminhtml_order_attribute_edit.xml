@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="scope_switcher"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit" name="ecomteck_order_custom_attributes_attribute_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit\Tabs" name="ecomteck_order_custom_attributes_attribute_edit_tabs">
+                <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit\Tab\Main" name="ecomteck_order_custom_attributes_attribute_edit_tab_general"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">general</argument>
+                    <argument name="block" xsi:type="string">ecomteck_order_custom_attributes_attribute_edit_tab_general</argument>
+                </action>
+                <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit\Tab\Conditions" name="ecomteck_order_custom_attributes_attribute_edit_tab_conditions"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">conditions</argument>
+                    <argument name="block" xsi:type="string">ecomteck_order_custom_attributes_attribute_edit_tab_conditions</argument>
+                </action>
+                <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit\Tab\Options" name="ecomteck_order_custom_attributes_attribute_edit_tab_options"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">options</argument>
+                    <argument name="block" xsi:type="string">ecomteck_order_custom_attributes_attribute_edit_tab_options</argument>
+                </action>
+                
+            </block>
+        </referenceContainer>
+        <referenceContainer name="js">
+            <block class="Ecomteck\OrderCustomAttributes\Block\Adminhtml\Order\Attribute\Edit\Js" template="attribute/js.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

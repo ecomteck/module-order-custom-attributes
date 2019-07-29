@@ -1,0 +1,22 @@
+<?php if($orderCustomAttributes = $block->getOrderCustomAttributes()):?>
+    <section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?php /* @escapeNotVerified */ echo __('Order Custom Attributes') ?></span>
+        </div>
+        <div class="admin__page-section-content">
+            <?php foreach($orderCustomAttributes as $form):?>
+                <div class="admin__page-section-item order-payment-method">
+                        <div class="admin__page-section-item-title">
+                        <span class="title"><?php echo $form['label']?></span>
+                    </div>
+                    <div class="admin__page-section-item-content">
+                        <?php foreach($form['attributes'] as $attribute):?>
+                            <strong><?php echo $attribute['label']?>:</strong>
+                            <span class="price"><?php echo nl2br($block->escapeHtml($attribute['value']));?></span><br/>
+                        <?php endforeach?>
+                    </div>
+                </div>
+            <?php endforeach?>
+        </div>
+    </section>
+<?php endif; ?>

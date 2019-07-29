@@ -1,0 +1,45 @@
+<?php
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Create account form template
+ *
+ * @var $block \Ecomteck\CustomAttributeManagement\Block\Form\Renderer\File
+ */
+?>
+<?php
+$fieldCssClass = 'field  field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?php /* @escapeNotVerified */ echo $fieldCssClass; ?>">
+    <label class="label" for="<?php echo $block->getHtmlId()?>"><span><?php /* @escapeNotVerified */ echo $block->getLabel() ?></span></label>
+    <div class="control">
+        <input type="file" id="<?php echo $block->getHtmlId()?>" name="<?php /* @escapeNotVerified */ echo $block->getFieldName()?>" value="" class="input-file">
+        <input type="hidden" id="<?php echo $block->getHtmlId()?>_value" name="<?php /* @escapeNotVerified */ echo $block->getFieldName()?>_value" value="<?php /* @escapeNotVerified */ echo $block->getEscapedValue()?>" <?php if ($block->isRequired()): ?>data-validate="{required:true}" <?php endif;?>/>
+        <?php if ($_message = $block->getAdditionalDescription()) : ?>
+        <div class="note"><?php /* @escapeNotVerified */ echo $_message; ?></div>
+        <?php endif; ?>
+    </div>
+</div>

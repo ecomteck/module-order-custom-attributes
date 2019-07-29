@@ -1,0 +1,63 @@
+<?php
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php $websites = $block->getWebsites(); ?>
+<?php if ($websites): ?>
+<div class="field field-store-switcher">
+    <label class="label" for="website_switcher"><?php /* @escapeNotVerified */ echo __('Choose Website:') ?></label>
+    <div class="control">
+        <select name="website_switcher" id="website_switcher" onchange="return switchWebsite(this);">
+        <?php if ($block->hasDefaultOption()): ?>
+            <option value=""><?php /* @escapeNotVerified */ echo $block->getDefaultStoreName() ?></option>
+        <?php endif; ?>
+            <?php foreach ($websites as $website): ?>
+                <option value="<?php /* @escapeNotVerified */ echo $website->getId() ?>"<?php if ($block->getStoreId() == $website->getId()): ?> selected="selected"<?php endif; ?>><?php /* @escapeNotVerified */ echo $website->getName() ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <?php echo $block->getHintHtml() ?>
+</div>
+<script>
+    require(['prototype'], function(){
+        window.switchWebsite = function(obj){
+            var storeParam = obj.value ? 'website/'+obj.value + '/' : '';
+            if(obj.switchParams){
+                storeParam+= obj.switchParams;
+            }
+        <?php if ($block->getUseConfirm()): ?>
+            if(confirm("<?php /* @escapeNotVerified */ echo __('Please confirm site switching. All data that hasn\'t been saved will be lost.') ?>")){
+                setLocation('<?php /* @escapeNotVerified */ echo $block->getSwitchUrl() ?>'+storeParam);
+                return true;
+            }
+            else {
+                obj.value = '<?php /* @escapeNotVerified */ echo $block->getStoreId() ?>';
+            }
+            return false;
+        <?php else: ?>
+            setLocation('<?php /* @escapeNotVerified */ echo $block->getSwitchUrl() ?>'+storeParam);
+        <?php endif; ?>
+        }
+    });
+</script>
+<?php endif; ?>

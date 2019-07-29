@@ -1,0 +1,58 @@
+<?php
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Create account form template
+ */
+/* @var $block \Ecomteck\CustomAttributeManagement\Block\Form\Renderer\Multiline */
+?>
+<?php
+$fieldCssClass = 'field multiline field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?php /* @escapeNotVerified */ echo $fieldCssClass; ?>">
+    <label class="label" for="<?php echo $block->getHtmlId(0)?>"><span><?php /* @escapeNotVerified */ echo $block->getLabel() ?></span></label>
+    <div class="control">
+        <input type="text" id="<?php echo $block->getHtmlId(0)?>" name="<?php echo $block->getFieldName('')?>" value="<?php /* @escapeNotVerified */ echo $block->getEscapedValue(0) ?>" class="input-text<?php echo $block->getHtmlClass(); ?>">
+        <?php $_message = $block->getAdditionalDescription(); ?>
+        <?php if ($block->getLineCount() == 1 && $_message) : ?>
+        <div class="note"><?php /* @escapeNotVerified */ echo $_message; ?></div>
+        <?php endif; ?>
+        <?php if ($block->getLineCount() > 1): ?>
+        <div class="nested">
+            <?php for ($i = 1, $lc = $block->getLineCount(); $i < $lc; $i ++): ?>
+            <div class="field additional no-label">
+                <div class="control">
+                    <input type="text" id="<?php echo $block->getHtmlId($i)?>" name="<?php echo $block->getFieldName('')?>" value="<?php /* @escapeNotVerified */ echo $block->getEscapedValue($i) ?>" class="input-text<?php echo $block->getLineHtmlClass();?>">
+                <?php if ($block->getLineCount() == $i+1 && $_message) : ?>
+                    <div class="note"><?php /* @escapeNotVerified */ echo $_message; ?></div>
+                <?php endif; ?>
+                </div>
+            </div>
+            <?php endfor; ?>
+        </div>
+        <?php endif;?>
+    </div>
+</div>

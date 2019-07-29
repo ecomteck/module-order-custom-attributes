@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Ecomteck_OrderCustomAttributes::order_attributes_order_attributes" title="Order Attributes" translate="title" module="Ecomteck_OrderCustomAttributes" sortOrder="10" parent="Ecomteck_CustomAttributeManagement::menu" action="adminhtml/order_attribute" resource="Ecomteck_OrderCustomAttributes::order_attributes"/>
+        <add id="Ecomteck_OrderCustomAttributes::order_attributes_order_form_type" title="Checkout Form" translate="title" module="Ecomteck_OrderCustomAttributes" sortOrder="10" parent="Ecomteck_CustomAttributeManagement::menu" action="adminhtml/order_formtype" resource="Ecomteck_OrderCustomAttributes::order_attributes"/>
+    </menu>
+</config>

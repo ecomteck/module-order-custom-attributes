@@ -1,0 +1,26 @@
+<li data-bind="css:code+'-step' + ' step',attr: {id:code},fadeVisible: isVisible">
+    <div class="step-title"  data-role="title">
+        <i data-bind="css:icon"></i>
+        <span data-bind="text: stepTitle"></span>
+    </div>
+    <div id="checkout-step-title"
+            class="step-content"
+            data-role="content">
+        <form data-bind="attr: {id:code+'-form'},submit: navigateToNextStep" novalidate="novalidate">
+            <div class="fieldset">
+                <!-- ko foreach: getRegion('order-custom-attributes') -->
+                    <!-- ko template: getTemplate() --><!-- /ko -->
+                <!--/ko-->
+                <div class="actions-toolbar">
+                    <button data-role="opc-continue" data-bind="click:backStep" class="button action back primary">
+                        <span><!-- ko i18n: 'Back'--><!-- /ko --></span>
+                    </button>
+                    <button data-role="opc-continue" type="submit"  class="button action continue primary">
+                        <span><!-- ko i18n: 'Next'--><!-- /ko --></span>
+                    </button>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+</li>

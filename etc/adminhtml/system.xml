@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="customer">
+            <group id="address">
+                <field id="street_lines" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="prefix_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="middlename_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="suffix_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="dob_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="taxvat_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="gender_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+            </group>
+        </section>
+    </system>
+</config>

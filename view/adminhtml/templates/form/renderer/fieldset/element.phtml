@@ -1,0 +1,85 @@
+<?php
+/**
+ * Ecomteck
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Ecomteck.com license that is
+ * available through the world-wide-web at this URL:
+ * https://ecomteck.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Ecomteck
+ * @package     Ecomteck_OrderCustomAttributes
+ * @copyright   Copyright (c) 2018 Ecomteck (https://ecomteck.com/)
+ * @license     https://ecomteck.com/LICENSE.txt
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * @see \Ecomteck\OrderCustomAttributes\Block\Adminhtml\Form\Renderer\Fieldset\Element
+ */
+?>
+
+<?php
+$element = $block->getElement();
+$note = $element->getNote() ? '<div class="note">' . $element->getNote() . '</div>' : '';
+$elementBeforeLabel = $element->getExtType() == 'checkbox' || $element->getExtType() == 'radio';
+$addOn = $element->getBeforeElementHtml() || $element->getAfterElementHtml();
+$fieldId = ($element->getHtmlId()) ? ' id="attribute-' . $element->getHtmlId() . '-container"' : '';
+$fieldClass = "field field-{$element->getId()} {$element->getCssClass()}";
+$fieldClass .= ($elementBeforeLabel) ? ' choice' : '';
+$fieldClass .= ($addOn) ? ' with-addon' : '';
+$fieldClass .= ($element->getRequired()) ? ' required' : '';
+$fieldClass .= ($note) ? ' with-note' : '';
+
+$fieldAttributes = $fieldId . ' class="' . $fieldClass . '" '
+    . $block->getUiId('form-field', $element->getId());
+?>
+
+<?php $block->checkFieldDisable() ?>
+<?php
+$elementToggleCode = $element->getToggleCode() ? $element->getToggleCode()
+    : 'toggleValueElements(this, this.parentNode.parentNode.parentNode)';
+?>
+<?php if (!$element->getNoDisplay()): ?>
+<?php if ($element->getType() == 'hidden'): ?>
+    <?php echo $element->getElementHtml() ?>
+    <?php else: ?>
+    <div<?php /* @escapeNotVerified */ echo $fieldAttributes ?>>
+        <?php if ($elementBeforeLabel): ?>
+        <?php echo $element->getElementHtml() ?>
+            <?php echo $element->getLabelHtml('', $block->getScopeLabel()) ?>
+        <?php /* @escapeNotVerified */ echo $note ?>
+        <?php else: ?>
+            <?php echo $element->getLabelHtml('', $block->getScopeLabel()) ?>
+        <div class="control">
+            <?php /* @escapeNotVerified */ echo($addOn) ? '<div class="addon">' . $element->getElementHtml() . '</div>' : $element->getElementHtml(); ?>
+            <?php /* @escapeNotVerified */ echo $note ?>
+        </div>
+        <?php endif; ?>
+        <div class="field-service">
+            <?php if ($block->canDisplayUseDefault()): ?>
+            <label for="<?php echo $element->getHtmlId() ?>_default" class="choice use-default">
+                <input <?php if ($element->getReadonly()):?> disabled="disabled"<?php endif; ?>
+                                                            type="checkbox"
+                                                            name="use_default[]"
+                                                            class="use-default-control"
+                                                            id="<?php echo $element->getHtmlId() ?>_default"
+                    <?php if ($block->usedDefault()): ?> checked="checked"<?php endif; ?>
+                                                            onclick="<?php /* @escapeNotVerified */ echo $elementToggleCode; ?>"
+                                                            value="<?php /* @escapeNotVerified */ echo $element->getName(); ?>"/>
+                <span class="use-default-label"><?php /* @escapeNotVerified */ echo __('Use Default Value') ?></span>
+            </label>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+<?php endif; ?>
