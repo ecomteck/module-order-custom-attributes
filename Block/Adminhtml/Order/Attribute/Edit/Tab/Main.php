@@ -376,7 +376,9 @@ class Main extends \Magento\Eav\Block\Adminhtml\Attribute\Edit\Main\AbstractMain
         if ($attribute->getId()) {
             if ($attribute->getIsSystem()) {
                 foreach (['sort_order', 'is_visible', 'is_required', 'used_in_forms'] as $elementId) {
-                    $form->getElement($elementId)->setDisabled(true)->setIsSystem(true);
+                    if($form->getElement($elementId)){
+                        $form->getElement($elementId)->setDisabled(true)->setIsSystem(true);
+                    }
                 }
             }
             if (!$attribute->getIsUserDefined() && !$attribute->getIsSystem()) {
